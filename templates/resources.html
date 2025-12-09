@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm" style="border-radius: 1.25rem;">
+      <div class="card-body" style="padding: 2rem 2.5rem;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="card-title mb-1">Resources</h2>
+            <p class="text-muted small mb-0">
+              Rooms, instructors, equipment and other shared assets.
+            </p>
+          </div>
+          <a href="{{ url_for('create_resource') }}" class="btn btn-primary btn-lg">
+            + New Resource
+          </a>
+        </div>
+
+        {% if resources %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+              <tr>
+                <th style="width: 25%;">Name</th>
+                <th style="width: 15%;">Type</th>
+                <th style="width: 45%;">Current Allocations</th>
+                <th class="text-end" style="width: 15%;">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for r in resources %}
+                <tr>
+                  <td class="fw-semibold">{{ r.resource_name }}</td>
+                  <td>
+                    <span class="badge bg-secondary-subtle text-secondary">
+                      {{ r.resource_type }}
+                    </span>
+                  </td>
+                  <td>
+                    {% if r.allocations %}
+                      <ul class="small mb-0">
+                        {% for alloc in r.allocations %}
+                          <li>
+                            {{ alloc.event.title }}
+                            <span class="text-muted">
+                              ({{ alloc.event.start_time.strftime('%Y-%m-%d %H:%M') }})
+                            </span>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      <span class="text-muted small">Not allocated to any event</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-end">
+                    <a href="{{ url_for('edit_resource', resource_id=r.id) }}"
+                       class="btn btn-sm btn-outline-secondary me-2">
+                      Edit
+                    </a>
+                    <form action="{{ url_for('delete_resource', resource_id=r.id) }}"
+                          method="post" class="d-inline"
+                          onsubmit="return confirm('Delete this resource?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="text-muted mb-0">
+            No resources yet.
+            <a href="{{ url_for('create_resource') }}">Add your first resource</a>.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

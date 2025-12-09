@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm" style="border-radius: 1.25rem; max-width: 700px; margin: 0 auto;">
+      <div class="card-body" style="padding: 2rem 2.5rem;">
+        <h2 class="card-title mb-1">
+          {{ 'Edit Resource' if resource else 'New Resource' }}
+        </h2>
+        <p class="text-muted small mb-4">
+          Define a shared resource like a room, instructor or equipment.
+        </p>
+
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">Resource Name</label>
+            <input name="resource_name" class="form-control form-control-lg" required
+                   value="{{ resource.resource_name if resource else '' }}">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Resource Type</label>
+            <input name="resource_type" class="form-control"
+                   required placeholder="room, instructor, equipment, etc."
+                   value="{{ resource.resource_type if resource else '' }}">
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+              <button type="submit" class="btn btn-primary btn-lg me-2">Save</button>
+              <a href="{{ url_for('list_resources') }}" class="btn btn-outline-secondary btn-lg">
+                Cancel
+              </a>
+            </div>
+            {% if resource %}
+              <span class="text-muted small">
+                Resource #{{ resource.id }}
+              </span>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

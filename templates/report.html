@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm" style="border-radius: 1.25rem;">
+      <div class="card-body" style="padding: 2rem 2.5rem;">
+        <h2 class="card-title mb-1">Resource Utilisation Report</h2>
+        <p class="text-muted small mb-4">
+          Select a date-time range to see total hours and upcoming bookings per resource.
+        </p>
+
+        <form method="post" class="row g-3 mb-4">
+          <div class="col-md-4">
+            <label class="form-label">Range Start</label>
+            <input type="datetime-local" name="range_start"
+                   class="form-control" required
+                   value="{{ range_start.strftime('%Y-%m-%dT%H:%M') if range_start else '' }}">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Range End</label>
+            <input type="datetime-local" name="range_end"
+                   class="form-control" required
+                   value="{{ range_end.strftime('%Y-%m-%dT%H:%M') if range_end else '' }}">
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+              Generate Report
+            </button>
+          </div>
+        </form>
+
+        {% if range_start and range_end %}
+          <p class="small text-muted mb-3">
+            Showing utilisation between
+            <strong>{{ range_start.strftime('%Y-%m-%d %H:%M') }}</strong>
+            and
+            <strong>{{ range_end.strftime('%Y-%m-%d %H:%M') }}</strong>.
+          </p>
+        {% endif %}
+
+        {% if results and results|length > 0 %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+              <tr>
+                <th style="width: 30%;">Resource</th>
+                <th style="width: 15%;">Total Hours Utilised</th>
+                <th style="width: 55%;">Upcoming Bookings</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for row in results %}
+                <tr>
+                  <td>
+                    <div class="fw-semibold">{{ row.resource.resource_name }}</div>
+                    <div class="small text-muted">{{ row.resource.resource_type }}</div>
+                  </td>
+                  <td class="fw-semibold">
+                    {{ row.total_hours }}
+                  </td>
+                  <td>
+                    {% if row.upcoming %}
+                      <ul class="small mb-0">
+                        {% for ev in row.upcoming %}
+                          <li>
+                            <strong>{{ ev.title }}</strong>:
+                            {{ ev.start_time.strftime('%Y-%m-%d %H:%M') }}
+                            →
+                            {{ ev.end_time.strftime('%Y-%m-%d %H:%M') }}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      <span class="text-muted small">No upcoming bookings</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% elif range_start and range_end %}
+          <p class="text-muted mb-0">
+            No utilisation found for any resource in the selected range.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

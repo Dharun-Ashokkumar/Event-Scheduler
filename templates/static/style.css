@@ -1,0 +1,27 @@
+.content-wrapper {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.card {
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-body {
+  padding: 2rem 2.25rem;
+  font-size: 1.05rem;
+}
+
+.table {
+  font-size: 0.95rem;
+}
+
+.resource-checkbox-group {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

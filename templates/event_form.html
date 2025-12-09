@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm" style="border-radius: 1.25rem;">
+      <div class="card-body" style="padding: 2rem 2.5rem;">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <h2 class="card-title mb-1">
+              {{ 'Edit Event' if event and event.id else 'New Event' }}
+            </h2>
+            <p class="text-muted small mb-0">
+              Define the event schedule and allocate shared resources.
+            </p>
+          </div>
+          {% if event and event.id %}
+            <span class="badge bg-secondary-subtle text-secondary small">
+              Event #{{ event.id }}
+            </span>
+          {% endif %}
+        </div>
+
+        {% if conflicts and conflicts|length > 0 %}
+          <div class="alert alert-danger border-0 shadow-sm mb-4" style="padding: 1.5rem;">
+            <h6 class="alert-heading mb-2">Conflicts detected</h6>
+            <p class="small mb-2">
+              The selected time range and resources conflict with existing bookings:
+            </p>
+            <ul class="small mb-0">
+              {% for c in conflicts %}
+                <li>
+                  <strong>{{ c.resource.resource_name }}</strong>
+                  <span class="text-muted">({{ c.resource.resource_type }})</span>
+                  is already allocated to
+                  <strong>{{ c.conflicting_event.title }}</strong>
+                  [
+                  {{ c.conflicting_event.start_time.strftime('%Y-%m-%d %H:%M') }}
+                  →
+                  {{ c.conflicting_event.end_time.strftime('%Y-%m-%d %H:%M') }}
+                  ].
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <form method="post" class="mt-2">
+          <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input name="title" class="form-control form-control-lg" required
+                   value="{{ event.title or '' }}">
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Start Time</label>
+              <input type="datetime-local" name="start_time"
+                     class="form-control" required
+                     value="{{ event.start_time.strftime('%Y-%m-%dT%H:%M') if event.start_time else '' }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">End Time</label>
+              <input type="datetime-local" name="end_time"
+                     class="form-control" required
+                     value="{{ event.end_time.strftime('%Y-%m-%dT%H:%M') if event.end_time else '' }}">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3"
+                      placeholder="Optional details about this event">{{ event.description or '' }}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label d-block">Resources</label>
+            {% set selected_ids = selected_ids or [] %}
+            {% if resources %}
+              <div class="border rounded p-3 bg-light-subtle resource-checkbox-group">
+                <div class="row">
+                  {% for r in resources %}
+                    <div class="col-md-6 col-lg-4">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="resources"
+                               value="{{ r.id }}" id="res{{ r.id }}"
+                               {% if r.id in selected_ids %}checked{% endif %}>
+                        <label class="form-check-label small" for="res{{ r.id }}">
+                          <span class="fw-semibold">{{ r.resource_name }}</span>
+                          <span class="badge bg-secondary-subtle text-secondary ms-1">
+                            {{ r.resource_type }}
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="form-text">
+                You can allocate multiple resources (rooms, instructors, equipment).
+              </div>
+            {% else %}
+              <p class="text-muted small mb-0">
+                No resources yet.
+                <a href="{{ url_for('create_resource') }}">Create a resource first</a>.
+              </p>
+            {% endif %}
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+              <button class="btn btn-primary btn-lg me-2" type="submit">Save</button>
+              <a href="{{ url_for('list_events') }}" class="btn btn-outline-secondary btn-lg">
+                Cancel
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-9 mx-auto">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="card-title mb-1">Conflict Detection</h2>
+        <p class="text-muted small mb-3">
+          Shows overlapping bookings for the same resource across all events.
+        </p>
+
+        {% if conflicts and conflicts|length > 0 %}
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm align-middle mb-0">
+              <thead class="table-light">
+              <tr>
+                <th>Resource</th>
+                <th>Event A</th>
+                <th>Event B</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for c in conflicts %}
+                <tr>
+                  <td>
+                    <div class="fw-semibold">{{ c.resource.resource_name }}</div>
+                    <div class="small text-muted">{{ c.resource.resource_type }}</div>
+                  </td>
+                  <td class="small">
+                    <div class="fw-semibold">{{ c.event_a.title }}</div>
+                    <div class="text-muted">
+                      {{ c.event_a.start_time.strftime('%Y-%m-%d %H:%M') }}
+                      →
+                      {{ c.event_a.end_time.strftime('%Y-%m-%d %H:%M') }}
+                    </div>
+                  </td>
+                  <td class="small">
+                    <div class="fw-semibold">{{ c.event_b.title }}</div>
+                    <div class="text-muted">
+                      {{ c.event_b.start_time.strftime('%Y-%m-%d %H:%M') }}
+                      →
+                      {{ c.event_b.end_time.strftime('%Y-%m-%d %H:%M') }}
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="alert alert-success mb-0">
+            No conflicts detected between existing events and resources.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

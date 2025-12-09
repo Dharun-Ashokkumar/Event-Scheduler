@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm" style="border-radius: 1.25rem;">
+      <div class="card-body" style="padding: 2rem 2.5rem;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="card-title mb-1">Events</h2>
+            <p class="text-muted mb-0 small">
+              Manage events and their allocated resources.
+            </p>
+          </div>
+          <a href="{{ url_for('create_event') }}" class="btn btn-primary btn-lg">
+            + New Event
+          </a>
+        </div>
+
+        {% if events %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+              <tr>
+                <th style="width: 25%;">Title</th>
+                <th style="width: 25%;">Time</th>
+                <th style="width: 35%;">Resources</th>
+                <th class="text-end" style="width: 15%;">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for e in events %}
+                <tr>
+                  <td class="fw-semibold">{{ e.title }}</td>
+                  <td>
+                    <div class="small">
+                      <div>
+                        <span class="text-muted">Start:</span>
+                        {{ e.start_time.strftime('%Y-%m-%d %H:%M') }}
+                      </div>
+                      <div>
+                        <span class="text-muted">End:</span>
+                        {{ e.end_time.strftime('%Y-%m-%d %H:%M') }}
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    {% if e.allocations %}
+                      <div class="d-flex flex-wrap gap-1">
+                        {% for alloc in e.allocations %}
+                          <span class="badge bg-secondary-subtle text-secondary border">
+                            {{ alloc.resource.resource_name }}
+                            <span class="text-muted small">({{ alloc.resource.resource_type }})</span>
+                          </span>
+                        {% endfor %}
+                      </div>
+                    {% else %}
+                      <span class="text-muted small">No resources allocated</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-end">
+                    <a href="{{ url_for('edit_event', event_id=e.id) }}"
+                       class="btn btn-sm btn-outline-secondary me-2">
+                      Edit
+                    </a>
+                    <form action="{{ url_for('delete_event', event_id=e.id) }}"
+                          method="post" class="d-inline"
+                          onsubmit="return confirm('Delete this event?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="text-muted mb-0">
+            No events yet. <a href="{{ url_for('create_event') }}">Create your first event</a>.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
