@@ -33,3 +33,7 @@ A small Flask + MySQL web application to schedule events (workshops, seminars, c
 ```bash
 git clone https://github.com/your-username/event-scheduler.git
 cd event-scheduler
+
+
+VIDEO PRESENTATION:
+https://drive.google.com/file/d/1uwAS9q52ul8L0-Xk_oRarL4Dss29lfbX/view?usp=drive_link
